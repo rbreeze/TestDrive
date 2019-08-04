@@ -28,6 +28,9 @@ function draw() {
   if(keys[37]) road.r -= 0.02;
   if(keys[39]) road.r += 0.02;
 
+  m3p.acceleratorPressed = false
+  m3p.reverse = false
+
   // backwards
   if (keys[40]) {
     // road.ax = Math.cos(road.r) * 0.06;
@@ -38,20 +41,13 @@ function draw() {
   else if (keys[38]) { 
     m3p.acceleratorPressed = true 
     m3p.reverse = false
-  } 
-  // regen braking
-  else if (road.vx < 0) {
-    road.ax = Math.cos(road.r) * 0.03;
-    m3p.acceleratorPressed = false
-    m3p.reverse = false
-  } else {
-    road.ax = 0
   }
 
   // updatePosition(road)
   drive(road, m3p)
   road.draw(ctx)
   m3p.draw(ctx)
+  accelBar.draw(ctx)
 }
 
 function drive(road, car) {
@@ -71,11 +67,15 @@ function drive(road, car) {
   // update acceleration [pixels / frame^2]
   var Fmotors = 0
   if (car.acceleratorPressed)
-    Fmotors = car.driveRatio * car.maxTorque / car.radius
+    Fmotors = car.driveRatio * car.torque(v) / car.radius
   else if (car.reverse)
-    Fmotors = -0.5 * car.driveRatio * car.maxTorque / car.radius 
+    Fmotors = -0.5 * car.driveRatio * car.maxTorque / car.radius
+  else if (road.vx < 0)
+    Fmotors = -0.4 * car.driveRatio * car.maxTorque / car.radius
 
   road.ax = (rr + convertForce(drag) - convertForce(Fmotors)) / car.mass 
+
+  accelBar.update(-road.ax, -v)
 
   // update velocity [pixels / frame]
   road.vx += road.ax

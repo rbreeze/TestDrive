@@ -1,0 +1,93 @@
+* { 
+  padding: 0; 
+  margin: 0; 
+}
+
+@font-face {
+  font-family: GothamPro;
+  src: url(fonts/GothamPro.woff2) format("woff2"),
+       url(fonts/GothamPro.woff) format("woff"), 
+       url(fonts/GothamPro.ttf) format("truetype");
+  font-weight: 200;
+  font-style: normal
+}
+
+@font-face {
+  font-family: GothamPro;
+  src: url(fonts/GothamPro-Medium.eot);
+  src: url(fonts/GothamPro-Medium.woff2) format("woff2"),
+       url(fonts/GothamPro-Medium.woff) format("woff"),
+       url(GothamPro-Medium.ttf) format("truetype");
+  font-weight: 400;
+  font-style: normal
+}
+
+canvas { 
+  background: #eee; 
+  display: block; 
+  margin: 0 auto; 
+  margin-top: 20px; 
+}
+
+.dash {
+  display: flex;
+  vertical-align: middle;
+  justify-content: center;
+  align-content: center;
+  width: 1080px;
+  margin: 0 auto;
+}
+
+.left { margin-right: auto; }
+
+.right { margin-left: auto;  }
+
+.cluster {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.instrument { 
+  font-family: "GothamPro"; 
+  font-weight: 400;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.label {
+  font-size: 14px;
+  margin-top: 7px;
+  text-transform: uppercase;
+}
+
+.speedometer {
+  font-size: 45px;
+  align-self: center;
+}
+
+.battIndicator {
+  display: flex;
+  margin-left: auto;
+  vertical-align: middle;
+}
+
+.battery {
+  border: 3px solid #555;
+  background: #555;
+  width: 60px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.range {
+  margin-right: 10px;
+  line-height: 26px; /* 2 * (batt. border + height) */
+}
+
+.battery .charge {
+  width: 60%;
+  height: 100%;
+  border-radius: 3px;
+  background: #04C304;
+}

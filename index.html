@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<title>Tesla Game</title>
-<style>
-  * { padding: 0; margin: 0; }
-  canvas { background: #eee; display: block; margin: 0 auto; margin-top: 20px; }
-  .speedometer, .timer, .dragometer { 
-    font-family: 'Helvetica'; 
-    text-align: center;
-    margin-top: 20px;
-  }
-</style>
+  <meta charset="utf-8" />
+  <title>Tesla Game</title>
+  <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
 
 <canvas id="gameScreen" width="1080" height="320"></canvas>
-<div class="speedometer">
-  <span id="speed"></span> mph
+
+<div class="dash">
+
+  <div class="instrument cluster left"> 
+
+  </div>
+
+  <div class="speedometer instrument">
+    <div id="speed"></div> 
+    <div class="label">mph</div>
+  </div>
+
+  <div class="instrument cluster right"> 
+
+    <div class="battIndicator instrument"> 
+      <div class="range">250 mi</div>
+      <div class="battery">
+        <div class="charge"></div>
+      </div>
+    </div>
+    
+  </div>
+
 </div>
-<div class="dragometer">
+
+<div class="dragometer instrument">
   <span id="drag"></span> kN
 </div>
 
 <script src="cars.js"></script>
 <script src="road.js"></script>
+<script src="accelBar.js"></script>
 <script src="main.js"></script>
 
 </body>
