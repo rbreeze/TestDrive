@@ -47,7 +47,7 @@ function draw() {
   drive(road, m3p)
   road.draw(ctx)
   m3p.draw(ctx)
-  accelBar.draw(ctx)
+  bar.draw(ctx)
 }
 
 function drive(road, car) {
@@ -75,7 +75,11 @@ function drive(road, car) {
 
   road.ax = (rr + convertForce(drag) - convertForce(Fmotors)) / car.mass 
 
-  accelBar.update(-road.ax, -v)
+  if (road.ax < 0) {
+    bar.accel()
+  } else if (road.ax > 0) {
+    bar.deccel()
+  }
 
   // update velocity [pixels / frame]
   road.vx += road.ax

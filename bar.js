@@ -1,4 +1,4 @@
-var accelBar = {
+var bar = {
   height: 5,
   accelWidth: 0, 
   deccelWidth: 0, 
@@ -19,9 +19,12 @@ var accelBar = {
     ctx.fillStyle = '#04C304';
     ctx.fillRect(w / 2, h - this.height, - this.deccelWidth, this.height);
   }, 
-  update(a, v) {
-    if (a > 0) this.accelWidth =  Math.abs( Math.pow(v, 1) )
-    else if (a == 0) this.accelWidth = 0
-    else this.deccelWidth = -v
+  accel() {
+    if (this.deccelWidth < 0) this.deccelWidth += 1
+    else this.accelWidth += 1
+  }, 
+  deccel() {
+    if (this.accelWidth > 0) this.accelWidth -= 2
+    else this.deccelWidth += 2
   }
 }
