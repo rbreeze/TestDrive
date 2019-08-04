@@ -1,41 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Tesla Game</title>
-    <style>
-      * { padding: 0; margin: 0; }
-      canvas { background: #eee; display: block; margin: 0 auto; margin-top: 20px; }
-      .speedometer, .timer, .dragometer { 
-        font-family: 'Helvetica'; 
-        text-align: center;
-        margin-top: 20px;
-      }
-    </style>
-</head>
-<body>
-
-<canvas id="gameScreen" width="1080" height="320"></canvas>
-<div class="speedometer">
-  <span id="speed"></span> mph
-</div>
-<div class="timer">
-  <span id="time"></span> seconds
-</div>
-<div class="dragometer">
-  <span id="drag"></span> kN
-</div>
-
-<script src="cars.js"></script>
-<script>
 // SCALE: 1px = 1 inch
 // 60 MPH = 88 px / sec
 
 var canvas = document.getElementById("gameScreen");
 var ctx = canvas.getContext("2d");
 
-const framerate = 100 // frames / sec
+/* CONSTANTS */
 
+const framerate = 100 // frames / sec
 const roadWidth = 170 // inches
 
 const friction = .05
@@ -75,25 +46,6 @@ var road = {
   }
 }
 
-var accelBar = {
-  height: 5,
-  accelWidth: 0, 
-  deccelWidth: 0, 
-  draw: function() {
-    ctx.save(); 
-    ctx.fillStyle = '#CECECE';
-    ctx.fillRect(0, canvas.height - this.height, canvas.width, this.height);
-
-    // accel
-    ctx.fillStyle = '#46D400';
-    ctx.fillRect(canvas.width / 2, canvas.height - this.height, this.accelWidth, this.height);
-
-    // deccel
-    ctx.fillStyle = '#C20808';
-    ctx.fillRect(canvas.width / 2, canvas.height - this.height, - this.deccelWidth, this.height);
-  }
-}
-
 var rightPressed = false;
 var leftPressed = false;
 var upPressed = false;
@@ -108,48 +60,31 @@ document.addEventListener('keyup', function(e){
 });
 
 function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // if (timerRunning) car.timer += (interval / 1000)
 
-    // if (timerRunning) car.timer += (interval / 1000)
+  if(keys[37]) road.r -= 0.02;
+  if(keys[39]) road.r += 0.02;
 
-    if(keys[37]) road.r -= 0.02;
-    if(keys[39]) road.r += 0.02;
+  // backwards
+  if (keys[40]) {
+    road.ax = Math.cos(road.r) * 0.06;
+  } 
+  // forwards
+  else if (keys[38]) { 
+    road.ax = -1 * Math.cos(road.r) * 0.09; 
+  } 
+  // regen breaking
+  else if (road.vx < 0) {
+    road.ax = Math.cos(road.r) * 0.02;
+  } else {
+    road.ax = 0
+  }
 
-    // backwards
-    if (keys[40]) {
-      road.ax = Math.cos(road.r) * 0.06;
-      if (accelBar.accelWidth > 0) accelBar.accelWidth -= road.ax * abFactor
-      else accelBar.deccelWidth -= road.ax * -abFactor
-      // road.ay = Math.sin(road.r) * 0.06;
-    } else if (keys[38]) { // forwards
-      road.ax = -1 * Math.cos(road.r) * 0.09; 
-      if (accelBar.deccelWidth > 0) accelBar.deccelWidth += road.ax * abFactor
-      else accelBar.accelWidth -= road.ax * abFactor
-      // road.ay = -1 * Math.sin(road.r) * 0.09;
-      // timerRunning = true
-    } else if (road.vx < 0) {
-      road.ax = Math.cos(road.r) * 0.02;
-      if (accelBar.accelWidth > 0) accelBar.accelWidth += road.ax * -abFactor * 20
-      else if (road.ax > 0) accelBar.deccelWidth += road.ax * abFactor
-      else accelBar.deccelWidth -= road.ax * abFactor
-    } else {
-      road.ax = 0
-    }
-
-    if (accelBar.accelWidth >= canvas.width / 2) {
-      accelBar.accelWidth = canvas.width / 2
-    } else if (accelBar.deccelWidth >= canvas.width / 2) {
-      accelBar.deccelWidth = canvas.width / 2
-    }
-
-    // var timer = document.getElementById("time");
-    // timer.innerHTML = Math.round(car.timer * 10) / 10
-
-    updatePosition(road)
-    road.draw()
-    m3p.draw()
-    // accelBar.draw()
+  updatePosition(road)
+  road.draw()
+  m3p.draw()
 }
 
 function moveCar(car) {
@@ -217,8 +152,3 @@ tesla.onload = function() {
   // 360000 intervals per hour
 }
 tesla.src = "tesla.svg";
-
-</script>
-
-</body>
-</html>

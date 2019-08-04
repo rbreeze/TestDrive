@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Tesla Game</title>
+<style>
+  * { padding: 0; margin: 0; }
+  canvas { background: #eee; display: block; margin: 0 auto; margin-top: 20px; }
+  .speedometer, .timer, .dragometer { 
+    font-family: 'Helvetica'; 
+    text-align: center;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="gameScreen" width="1080" height="320"></canvas>
+<div class="timer">
+  <span id="time"></span> seconds
+</div>
+<div class="dragometer">
+  <span id="drag"></span> kN
+</div>
+
+<script src="cars.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>
