@@ -13,10 +13,11 @@ ctx.scale(2,2)
 
 color = "white"
 
+var timeline
+
 /* CONSTANTS */
 
 const framerate = 100 // frames / sec
-const friction = .015
 const g = 9.8 // m / s^2
 const airDensity = 1.29 // kg / m^3
 
@@ -32,6 +33,10 @@ document.addEventListener('keyup', function(e) {
 
 function changeColor(color) {
   tesla.src = "cars/m3_" + color + ".svg";
+  tesla.onload = function() {
+    clearInterval(timeline)
+    timeline = setInterval(draw, 1000 / framerate);
+  }
 }
 
 function draw() {
@@ -56,6 +61,11 @@ function draw() {
     m3p.reverse = false
   }
 
+  else if (keys[32]) {
+    m3p.brakePressed = true
+    m3p.acceleratorPressed = false
+  }
+
   // updatePosition(road)
   drive(road, m3p)
   road.draw(ctx)
@@ -74,7 +84,7 @@ function drive(road, car) {
   drag = (isNaN(drag) ? 0 : drag);
 
   // rolling resistance
-  var rr = convertForce((v / Math.abs(v)) * car.mass * g * friction)
+  var rr = convertForce((v / Math.abs(v)) * car.mass * g * car.tireFriction)
   rr = (isNaN(rr) ? 0 : rr)
 
   // motors
@@ -83,7 +93,9 @@ function drive(road, car) {
     Fmotors = car.efficiency * car.driveRatio * car.torque(v * 1.609) / car.radius
   else if (car.reverse)
     Fmotors = -0.5 * car.driveRatio * car.maxTorque / car.radius
-  else if (road.vx < 0)
+  else if (road.ax < 0) // car is still accelerating without accelerator pressed
+    Fmotors = 0
+  else if (v > 10) // regen above 10mph
     Fmotors = -0.4 * car.driveRatio * car.maxTorque / car.radius
 
   // 0-60 timer
@@ -102,10 +114,10 @@ function drive(road, car) {
   road.vx += road.ax
 
   // update energy bar
-  var power = Math.round( Fmotors * vm / 1000) // kW
-  updateInstrument("power", Math.round(power))
+  var power = Math.round( Fmotors * vm / 100) / 10 // kW
+  updateInstrument("power", power)
   updateInstrument("exertion", Math.round( 100 * power / car.maxPower ))
-  bar.update(power)
+  bar.update(power, v)
 
   // update position [pixels]
   road.x += road.vx;
@@ -133,7 +145,7 @@ function updateInstrument(id, value) {
 // load graphics and draw
 var tesla = new Image();
 tesla.onload = function() {
-  setInterval(draw, 1000 / framerate);
+  timeline = setInterval(draw, 1000 / framerate);
 }
 
 tesla.src = "cars/m3_" + color + ".svg";

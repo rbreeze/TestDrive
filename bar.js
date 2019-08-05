@@ -2,8 +2,7 @@ var bar = {
   height: 5,
   accelWidth: 0, 
   deccelWidth: 0, 
-  maxPower: 353, // kW
-  maxWidth: 550,
+  maxWidth: 500,
   draw: function(ctx) {
     ctx.save();
 
@@ -23,9 +22,9 @@ var bar = {
 
     ctx.restore(); 
   }, 
-  update (p) {
-    var w = p / this.maxPower * this.maxWidth
-    if (p > 0) this.accelWidth = w
-    else if (p < 0) this.deccelWidth = - w
+  update (p, v) {
+    this.deccelWidth = 0
+    if (p >= 0) this.accelWidth = p
+    else this.deccelWidth = -p
   }
 }

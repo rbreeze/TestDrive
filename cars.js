@@ -13,10 +13,13 @@ var m3p = {
   frontalArea: 2.22, // m^2
   timer: 0,
   acceleratorPressed: false,
-  driveRatio: 9, 
+  brakePressed: false,
   reverse: false,
+  driveRatio: 9, 
   efficiency: .97,
   dropoff: 80, // km/h 
+  tireFriction: .015, 
+  brakeFriction: .42,
   draw: function(ctx) {
     ctx.save();
     var x = ctx.canvas.clientWidth / 2 - this.length / 2
