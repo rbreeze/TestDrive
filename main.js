@@ -1,8 +1,17 @@
 // SCALE: 1px = 1 inch
-// 60 MPH = 88 px / sec
 
+// setup
 var canvas = document.getElementById("gameScreen");
 var ctx = canvas.getContext("2d");
+
+canvas.width = 1080*2;
+canvas.height = 320*2;
+canvas.style.width = "1080px";
+canvas.style.height = "320px";
+
+ctx.scale(2,2)
+
+color = "white"
 
 /* CONSTANTS */
 
@@ -20,6 +29,10 @@ document.addEventListener('keydown', function(e) {
 document.addEventListener('keyup', function(e) {
     keys[e.which] = false;
 });
+
+function changeColor(color) {
+  tesla.src = "cars/m3_" + color + ".svg";
+}
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -54,45 +67,55 @@ function drive(road, car) {
 
   // get current speed
   var v = convertSpeed(road.vx) // miles per hour
-  var vm = 1.609 * v
+  var vm = (1609 / 3600) * v // m / s
 
   // drag
-  var drag = 0.5 * car.Cd * airDensity * Math.abs(vm) * vm * car.frontalArea // kg * m / sec^2 [N]
+  var drag = 0.5 * car.Cd * airDensity * vm * vm * car.frontalArea // kg * m / sec^2 [N]
   drag = (isNaN(drag) ? 0 : drag);
 
   // rolling resistance
   var rr = convertForce((v / Math.abs(v)) * car.mass * g * friction)
   rr = (isNaN(rr) ? 0 : rr)
 
-  // update acceleration [pixels / frame^2]
+  // motors
   var Fmotors = 0
   if (car.acceleratorPressed)
-    Fmotors = car.driveRatio * car.torque(v) / car.radius
+    Fmotors = car.efficiency * car.driveRatio * car.torque(v * 1.609) / car.radius
   else if (car.reverse)
     Fmotors = -0.5 * car.driveRatio * car.maxTorque / car.radius
   else if (road.vx < 0)
     Fmotors = -0.4 * car.driveRatio * car.maxTorque / car.radius
 
-  road.ax = (rr + convertForce(drag) - convertForce(Fmotors)) / car.mass 
+  // 0-60 timer
+  if (road.ax < 0 && v <= 60)
+    car.timer += 1 / framerate
 
-  if (road.ax < 0) {
-    bar.accel()
-  } else if (road.ax > 0) {
-    bar.deccel()
-  }
+  updateInstrument("timer", Math.round(car.timer * 100) / 100)
+
+  // net force
+  var Fnet = (rr + convertForce(drag) - convertForce(Fmotors))
+
+  // update acceleration [pixels / frame^2]
+  road.ax =  Fnet / car.mass 
 
   // update velocity [pixels / frame]
   road.vx += road.ax
+
+  // update energy bar
+  var power = Math.round( Fmotors * vm / 1000) // kW
+  updateInstrument("power", Math.round(power))
+  updateInstrument("exertion", Math.round( 100 * power / car.maxPower ))
+  bar.update(power)
 
   // update position [pixels]
   road.x += road.vx;
   road.y += road.vy; 
 
-  updateSpeedometer(convertSpeed(road.vx))
-  updateDragometer(drag)
+  updateInstrument("speed", convertSpeed(road.vx))
+  updateInstrument("drag", Math.round(drag))
 }
 
-// converts vx value to mph
+// converts vx (px / fr) value to mph
 function convertSpeed(ps) {
   return Math.round( -1 * (ps * 3600 * framerate) / 63360 ) // miles per hour
 }
@@ -102,14 +125,9 @@ function convertForce(f) {
   return Math.pow(1 / framerate, 2) * f * 12 * 5280 / 1609
 }
 
-function updateSpeedometer(speed) {
-  var speedometer = document.getElementById("speed");
-  speedometer.innerHTML = speed
-}
-
-function updateDragometer(drag) {
-  var dragometer = document.getElementById("drag")
-  dragometer.innerHTML = Math.round(drag / 10) / 100 // kN
+function updateInstrument(id, value) {
+  var i = document.getElementById(id)
+  i.innerHTML = value
 }
 
 // load graphics and draw
@@ -118,4 +136,4 @@ tesla.onload = function() {
   setInterval(draw, 1000 / framerate);
 }
 
-tesla.src = "tesla.svg";
+tesla.src = "cars/m3_" + color + ".svg";

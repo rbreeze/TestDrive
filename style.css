@@ -91,3 +91,29 @@ canvas {
   border-radius: 3px;
   background: #04C304;
 }
+
+.color {
+  border-radius: 100px;
+  background: black;
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.white {
+  background: white;
+  border: 2px solid black;
+}
+
+.grey {
+  background: #6C6F76;
+}
+
+.blue {
+  background: #063991;
+}
+
+.red {
+  background: #D4333D;
+}

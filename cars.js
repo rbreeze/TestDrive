@@ -8,12 +8,15 @@ var m3p = {
   mass: 1847, // kg, 
   Cd: .23, 
   maxTorque: 639, // Nm
-  radius: .241, // m
-  frontalArea: 2.24, // m^2
+  maxPower: 353, // kW
+  radius: .3429, // m
+  frontalArea: 2.22, // m^2
   timer: 0,
   acceleratorPressed: false,
   driveRatio: 9, 
   reverse: false,
+  efficiency: .97,
+  dropoff: 80, // km/h 
   draw: function(ctx) {
     ctx.save();
     var x = ctx.canvas.clientWidth / 2 - this.length / 2
@@ -23,9 +26,8 @@ var m3p = {
     ctx.drawImage(tesla, 0, 0, this.length, this.width);
     ctx.restore();
   }, 
-  torque: function(v) {
-    if (v <= 45) return this.maxTorque
-    else if (v <= 75) return this.maxTorque - 10 * (v - 45)
-    else return this.maxTorque
+  torque: function(v) { // v in km/h
+    if (v <= this.dropoff) return this.maxTorque
+    else return - 41.8 * Math.sqrt(v - this.dropoff) + this.maxTorque
   }
 };

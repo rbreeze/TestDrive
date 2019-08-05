@@ -3,15 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <title>Tesla Game</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
 
-<canvas id="gameScreen" width="1080" height="320"></canvas>
+<canvas id="gameScreen"></canvas>
 
 <div class="dash">
 
   <div class="instrument cluster left"> 
+    
+    <div class="instrument mr-4"> 
+      <div id="power"></div> 
+      <div class="label">kW</div>
+    </div>
+
+    <div class="instrument mr-4"> 
+      <span id="exertion"></span>%
+    </div>
+
+    <div class="instrument"> 
+      <span id="timer"></span> sec
+    </div>
 
   </div>
 
@@ -35,6 +49,14 @@
 
 <div class="dragometer instrument">
   <span id="drag"></span> kN
+</div>
+
+<div class="color-picker d-flex justify-content-center mt-4"> 
+  <div class="color white" onclick="changeColor('white')"></div>
+  <div class="color black" onclick="changeColor('black')"></div>
+  <div class="color grey" onclick="changeColor('grey')"></div>
+  <div class="color blue" onclick="changeColor('blue')"></div>
+  <div class="color red" onclick="changeColor('red')"></div>
 </div>
 
 <script src="cars.js"></script>
